@@ -1,9 +1,10 @@
-import requests
-from pyquery import PyQuery as pq
 from urllib.parse import urlparse
 
+import requests
+from pyquery import PyQuery as pq
+
+
 def podcast_feed(url):
-    aurl = 'https://podcasts.google.com/feed/aHR0cHM6Ly9mZWVkcy5zb3VuZG9uLmZtL3BvZGNhc3RzL2VjZDMxMDc2LWQxMmQtNDZkYy1iYTExLTMyZDI0YjQxY2NhNS54bWw/episode/OTI0NmNjNWUtYTA0Yy00NmNmLWE2MzMtNTBlZDM2ZDhiMjE4?sa=X&ved=0CAUQkfYCahcKEwj48qimxKT2AhUAAAAAHQAAAAAQGQ'
     headers = {
         'authority': 'podcasts.google.com',
         'pragma': 'no-cache',
@@ -19,9 +20,6 @@ def podcast_feed(url):
         'accept-language': 'en-US,en;q=0.9,zh-TW;q=0.8,zh;q=0.7',
     }
     r = requests.get(url, headers=headers)
-    files = open('呱G.html', 'r').read()
-
-    # css = pq(filename='呱G.html')('[jscontroller="TV0WMc"]').attr('jsdata')
-    css = pq(url=aurl)('[jscontroller="TV0WMc"]').attr('jsdata')
-    print(css)
-podcast_feed('')
+    result: str = pq(r.text)('[jscontroller="TV0WMc"]').attr('jsdata')
+    extract = result.split(';', 1)[1]
+    return urlparse(extract)._replace(query='').geturl()
