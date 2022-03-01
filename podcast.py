@@ -21,5 +21,15 @@ def podcast_feed(url):
     }
     r = requests.get(url, headers=headers)
     result: str = pq(r.text)('[jscontroller="TV0WMc"]').attr('jsdata')
-    extract = result.split(';', 1)[1]
-    return urlparse(extract)._replace(query='').geturl()
+    if not result:
+        return None
+    extract = result.split(';')[1]
+
+    file_url = extract#urlparse(extract)._replace(query='').geturl()
+    print('url: ', file_url)
+    file = requests.get(file_url)
+    with open('aaa.mp3', 'wb') as f:
+        f.write(file.content)
+
+    return file.raw
+    # return urlparse(extract)._replace(query='').geturl()
